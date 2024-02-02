@@ -16,6 +16,11 @@ export interface IForm {
   secondaryCTA: ICTA | null;
 }
 
+const initialSecondaryCTA = {
+  text: "Learn More",
+  link: "https://github.com/Permanaa/use-case-live-preview",
+}
+
 export default function Home() {
   const { handleSubmit, values, handleChange, setFieldValue } = useFormik<IForm>({
     initialValues: {
@@ -25,7 +30,7 @@ export default function Home() {
         text: "Get Started",
         link: "https://github.com/Permanaa"
       },
-      secondaryCTA: null
+      secondaryCTA: initialSecondaryCTA,
     },
     onSubmit: values => {
       console.log(values)
@@ -38,10 +43,7 @@ export default function Home() {
       setFieldValue("secondaryCTA", null)
       return
     }
-    setFieldValue("secondaryCTA", {
-      text: "",
-      link: "",
-    })
+    setFieldValue("secondaryCTA", initialSecondaryCTA)
   }
 
   return (
@@ -146,7 +148,7 @@ export default function Home() {
                   type="text"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-main-500 focus:border-main-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-main-500 dark:focus:border-main-500"
                   onChange={handleChange}
-                  value={values?.secondaryCTA?.text}
+                  value={values?.secondaryCTA?.text || ""}
                 />
               </div>
               <div className="flex gap-4 items-center">
@@ -163,7 +165,7 @@ export default function Home() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-main-500 focus:border-main-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-main-500 dark:focus:border-main-500"
                   placeholder="https://"
                   onChange={handleChange}
-                  value={values?.secondaryCTA?.link}
+                  value={values?.secondaryCTA?.link || ""}
                 />
               </div>
             </div>
