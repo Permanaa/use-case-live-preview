@@ -31,14 +31,21 @@ export default function Preview({ data }: IPreviewProps) {
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
             <a
-              href="#"
+              href={data.mainCTA.link}
+              target="_blank"
               className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              Get started
+              {data.mainCTA.text}
             </a>
-            <a href="#" className="text-sm font-semibold leading-6 text-white">
-              Learn more <span aria-hidden="true">→</span>
-            </a>
+            {!!data?.secondaryCTA && (
+              <a
+                href={data.secondaryCTA.link}
+                target="_blank"
+                className="text-sm font-semibold leading-6 text-white"
+              >
+                {data.secondaryCTA.text} <span aria-hidden="true">→</span>
+              </a>
+            )}
           </div>
         </div>
         <div className="relative mt-16 h-80 lg:mt-8">
