@@ -1,8 +1,10 @@
 "use client"
 
 import Preview from "@/components/preview";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { convertToBase64 } from "@/utils/convert-to-base-64";
 import { useFormik } from "formik";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 export interface ICTA {
   text: string;
@@ -14,6 +16,7 @@ export interface IForm {
   description: string;
   mainCTA: ICTA;
   secondaryCTA: ICTA | null;
+  image: string;
 }
 
 const initialSecondaryCTA = {
@@ -21,21 +24,32 @@ const initialSecondaryCTA = {
   link: "https://github.com/Permanaa/use-case-live-preview",
 }
 
+const defaultValues = {
+  title: "Boost your productivity. Start using our app today.",
+  description: "Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla.",
+  mainCTA: {
+    text: "Get Started",
+    link: "https://github.com/Permanaa"
+  },
+  secondaryCTA: initialSecondaryCTA,
+  image: "https://tailwindui.com/img/component-images/dark-project-app-screenshot.png",
+}
+
 export default function Home() {
-  const { handleSubmit, values, handleChange, setFieldValue } = useFormik<IForm>({
-    initialValues: {
-      title: "Boost your productivity. Start using our app today.",
-      description: "Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla.",
-      mainCTA: {
-        text: "Get Started",
-        link: "https://github.com/Permanaa"
-      },
-      secondaryCTA: initialSecondaryCTA,
-    },
+  const { set, get } = useLocalStorage()
+
+  const { handleSubmit, values, handleChange, setFieldValue, setValues } = useFormik<IForm>({
+    initialValues: defaultValues,
     onSubmit: values => {
-      console.log(values)
+      set<IForm>("live-preview", values)
     }
   })
+
+  useEffect(() => {
+    const initialValues = get<IForm>("live-preview") || defaultValues
+    setValues(initialValues)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onChangeSecondaryCTA = (e: ChangeEvent<HTMLInputElement>) => {
     const { checked } = e.currentTarget
@@ -46,9 +60,21 @@ export default function Home() {
     setFieldValue("secondaryCTA", initialSecondaryCTA)
   }
 
+  const onChangeImage = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files?.length) {
+      const base64Image= await convertToBase64(files[0]) as string
+      setFieldValue("image", base64Image)
+    }
+  }
+
+  const resetDefault = () => {
+    setValues(defaultValues)
+  }
+
   return (
     <main className="grid grid-cols-1 lg:grid-cols-3 min-h-full">
-      <div className="p-4 flex items-center justify-center bg-gray-300 dark:bg-slate-800">
+      <div className="p-4 flex items-center justify-center bg-gray-300 dark:bg-slate-800 overflow-y-auto">
         <form className="w-full max-w-lg flex flex-col gap-5" onSubmit={handleSubmit}>
           <div>
             <label
@@ -154,7 +180,7 @@ export default function Home() {
               <div className="flex gap-4 items-center">
                 <label
                   htmlFor="secondary-cta-link"
-                  className="block text-sm text-gray-900 dark:text-white text-nowrap w-32"
+                  className="block text-gray-900 dark:text-white text-nowrap w-32"
                 >
                   Redirect Link
                 </label>
@@ -169,6 +195,34 @@ export default function Home() {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="image" className="block font-medium leading-6">Image</label>
+            <input
+              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none focus:border focus:ring-1 focus:ring-main-500 focus:border-main-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+              id="image"
+              name="image"
+              type="file"
+              accept=".png, .jpeg, .jpg, .webp"
+              onChange={onChangeImage}
+            />
+          </div>
+
+          <div className="flex gap-4 self-end">
+            <button
+              type="button"
+              className="text-main-400 hover:text-main-300 p-2 rounded-lg w-fit focus:outline-none focus:ring-4 focus:ring-main-300"
+              onClick={resetDefault}
+            >
+              Reset to Default
+            </button>
+            <button
+              type="submit"
+              className="bg-gradient-to-br from-main-400 to-main-700 hover:from-main-300 hover:to-main-600 py-2 px-6 focus:outline-none focus:ring-4 focus:ring-main-300 rounded-lg w-fit"
+            >
+              Save
+            </button>
           </div>
         </form>
       </div>
