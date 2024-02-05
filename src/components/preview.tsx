@@ -51,7 +51,7 @@ export default function Preview({ data }: IPreviewProps) {
         <div className="relative mt-16 h-80 lg:mt-8">
           <Image
             className="absolute left-0 top-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
-            src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
+            src={data.image}
             alt="App screenshot"
             width={1824}
             height={1080}
